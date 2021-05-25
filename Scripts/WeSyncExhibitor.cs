@@ -1,0 +1,101 @@
+using ModelDrivenGUISystem;
+using ModelDrivenGUISystem.Factory;
+using ModelDrivenGUISystem.ValueWrapper;
+using ModelDrivenGUISystem.View;
+using nobnak.Gist;
+using nobnak.Gist.Cameras;
+using nobnak.Gist.Exhibitor;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace WeSyncSys {
+
+	public class WeSyncExhibitor : AbstractExhibitor {
+
+		[SerializeField]
+		protected Camera targetCamera = null;
+		[SerializeField]
+		protected Tuner tuner = new Tuner();
+
+		protected WeSpace space = new WeSpace();
+		protected WeTime time = new WeTime();
+
+		protected BaseView view;
+		protected CameraData screen;
+		protected Validator validatorValue = new Validator();
+
+		#region unity
+		private void OnEnable() {
+			validatorValue.Reset();
+			validatorValue.SetCheckers(() => !screen.Equals(targetCamera));
+			validatorValue.Validation += () => {
+				screen = targetCamera;
+
+				var uv = tuner.localUv;
+				var local = new Rect(uv.z, uv.w, uv.x, uv.y);
+				space.Apply(screen.screenSize, local);
+				time.Apply();
+			};
+		}
+		private void Update() {
+			validatorValue.Validate();
+		}
+		#endregion
+
+		#region interface
+
+		#region Exhibitor
+		public override void DeserializeFromJson(string json) {
+			JsonUtility.FromJsonOverwrite(json, tuner);
+			validatorValue.Invalidate();
+		}
+		public override object RawData() {
+			return tuner;
+		}
+		public override string SerializeToJson() {
+			validatorValue.Validate();
+			return JsonUtility.ToJson(tuner);
+		}
+		public override void Draw() {
+			GetView().Draw();
+		}
+		public override void ResetView() {
+			if (view != null) {
+				view.Dispose();
+				view = null;
+			}
+		}
+		public override void ApplyViewModelToModel() {
+			validatorValue.Validate();
+		}
+		public override void ResetViewModelFromModel() {
+			validatorValue.Invalidate();
+		}
+		#endregion
+
+		public void Listen(GameObject gameObject) {
+			targetCamera = gameObject.GetComponent<Camera>();
+			validatorValue.Invalidate();
+		}
+
+		#endregion
+
+		#region member
+		protected virtual BaseView GetView() {
+			if (view == null) {
+				var f = new SimpleViewFactory();
+				view = ClassConfigurator.GenerateClassView(new BaseValue<object>(tuner), f);
+			}
+			return view;
+		}
+		#endregion
+
+		#region definition
+		[System.Serializable]
+		public class Tuner {
+			public Vector4 localUv = new Vector4(1f, 1f, 0f, 0f);
+		}
+		#endregion
+	}
+}
