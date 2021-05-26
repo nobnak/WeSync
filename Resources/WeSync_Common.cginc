@@ -5,17 +5,6 @@
 
 #include "UnityCG.cginc"
 
-struct appdata {
-    float4 vertex : POSITION;
-    float2 uv : TEXCOORD0;
-};
-
-struct v2f {
-    float4 uv : TEXCOORD0;
-	float4 uvlocal : TEXCOORD1;
-    float4 vertex : SV_POSITION;
-};
-
 float4 _We_Time;
 float4x4 _We_Local2Global;
 float4x4 _We_Uv2Npos;
@@ -49,6 +38,10 @@ float2 local2global_uv_inv(float2 uv) {
     float4 m = _We_Local2Global[2];
     return m.xy * uv + m.zw;
 }
+
+
+
+float globalTime() { return _We_Time.y; }
 
 
 
