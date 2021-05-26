@@ -11,6 +11,7 @@ using UnityEngine;
 
 namespace WeSyncSys {
 
+	[ExecuteAlways]
 	public class WeSyncExhibitor : AbstractExhibitor {
 
 		[SerializeField]
@@ -31,12 +32,17 @@ namespace WeSyncSys {
 			validatorValue.SetCheckers(() => !screen.Equals(targetCamera));
 			validatorValue.Validation += () => {
 				screen = targetCamera;
+				if (targetCamera == null)
+					return;
 
 				var uv = tuner.localUv;
 				var local = new Rect(uv.z, uv.w, uv.x, uv.y);
 				space.Apply(screen.screenSize, local);
 				time.Apply();
 			};
+		}
+		private void OnValidate() {
+			validatorValue.Invalidate();
 		}
 		private void Update() {
 			validatorValue.Validate();
