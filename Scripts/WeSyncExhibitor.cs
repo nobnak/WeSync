@@ -8,6 +8,7 @@ using nobnak.Gist.Exhibitor;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace WeSyncSys {
 
@@ -16,6 +17,8 @@ namespace WeSyncSys {
 
 		[SerializeField]
 		protected Camera targetCamera = null;
+		[SerializeField]
+		protected Events events = new Events();
 		[SerializeField]
 		protected Tuner tuner = new Tuner();
 
@@ -39,6 +42,9 @@ namespace WeSyncSys {
 				var local = new Rect(uv.z, uv.w, uv.x, uv.y);
 				space.Apply(screen.screenSize, local);
 				time.Apply();
+			};
+			validatorValue.Validated += () => {
+				events.Changed?.Invoke(this);
 			};
 		}
 		private void OnValidate() {
@@ -80,12 +86,12 @@ namespace WeSyncSys {
 		}
 		#endregion
 
-		public void Listen(GameObject gameObject) {
+		public void ListenCamera(GameObject gameObject) {
 			targetCamera = gameObject.GetComponent<Camera>();
 			validatorValue.Invalidate();
 		}
 
-		#endregion
+#endregion
 
 		#region member
 		protected virtual BaseView GetView() {
@@ -95,13 +101,20 @@ namespace WeSyncSys {
 			}
 			return view;
 		}
-		#endregion
+#endregion
 
-		#region definition
+#region definition
 		[System.Serializable]
 		public class Tuner {
 			public Vector4 localUv = new Vector4(1f, 1f, 0f, 0f);
 		}
-		#endregion
+		[System.Serializable]
+		public class Events {
+			[System.Serializable]
+			public class WeSyncEvent : UnityEvent<WeSyncExhibitor> { }
+
+			public WeSyncEvent Changed = new WeSyncEvent();
+		}
+#endregion
 	}
 }
