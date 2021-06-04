@@ -13,7 +13,7 @@ using UnityEngine.Events;
 namespace WeSyncSys {
 
 	[ExecuteAlways]
-	public class WeSyncExhibitor : AbstractExhibitor {
+	public class WeSyncExhibitor : AbstractExhibitor, IReadonlyWeSpace {
 
 		[SerializeField]
 		protected Camera targetCamera = null;
@@ -32,16 +32,18 @@ namespace WeSyncSys {
 		#region unity
 		private void OnEnable() {
 			validatorValue.Reset();
-			validatorValue.SetCheckers(() => !screen.Equals(targetCamera));
+			validatorValue.SetCheckers(() => screen.Equals(targetCamera));
 			validatorValue.Validation += () => {
 				screen = targetCamera;
 				if (targetCamera == null)
 					return;
 
 				var uv = tuner.localUv;
-				var local = new Rect(uv.z, uv.w, uv.x, uv.y);
-				space.Apply(screen.screenSize, local);
+				var local = new Rect(uv.x, uv.y, uv.z, uv.w);
+				var rspace = space.Apply(screen.screenSize, local, tuner.globalSize);
 				time.Apply();
+
+				targetCamera.orthographicSize = Mathf.Max(1f, rspace.localField.y);
 			};
 			validatorValue.Validated += () => {
 				events.Changed?.Invoke(this);
@@ -56,6 +58,10 @@ namespace WeSyncSys {
 		#endregion
 
 		#region interface
+
+		#region IReadonlySubspace
+		public Structures.SubSpace CurrSubspace => space.CurrSubspace;
+		#endregion
 
 		#region Exhibitor
 		public override void DeserializeFromJson(string json) {
@@ -106,7 +112,8 @@ namespace WeSyncSys {
 #region definition
 		[System.Serializable]
 		public class Tuner {
-			public Vector4 localUv = new Vector4(1f, 1f, 0f, 0f);
+			public float globalSize = 10f;
+			public Vector4 localUv = new Vector4(0f, 0f, 1f, 1f);
 		}
 		[System.Serializable]
 		public class Events {

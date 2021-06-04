@@ -1,22 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WeSyncSys.Structures;
 
 namespace WeSyncSys {
 
-	public class WeSpace {
+	public interface IReadonlyWeSpace {
+		SubSpace CurrSubspace { get; }
+	}
+
+	public class WeSpace : IReadonlyWeSpace {
 
 		public readonly static int P_We_Local2Global = Shader.PropertyToID("_We_Local2Global");
 		public readonly static int P_We_Uv2Npos = Shader.PropertyToID("_We_Uv2Npos");
 
+		public event System.Action<IReadonlyWeSpace> Changed;
+
 		#region interface
-		public void Apply(Vector2Int screen, Rect local) {
-			var localAspect = (float)screen.x / screen.y;
-			var mlocal = LocalToGlobal(local.width, local.height, local.x, local.y, localAspect);
-			var muv = UvToNpos(local.width, local.height, local.x, local.y, localAspect);
+
+		#region IReadonlySubspace
+		public SubSpace CurrSubspace { get; protected set; }
+#endregion
+
+		public SubSpace Apply(Vector2Int localScreen, Rect localShare, float globalSize) {
+			var localShareSize = localShare.size;
+			var localAspect = (float)localScreen.x / localScreen.y;
+			var globalAspect = GlobalAspect(localShareSize.x, localShareSize.y, localAspect);
+			var mlocal = LocalToGlobal(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
+			var muv = UvToNpos(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
 
 			Shader.SetGlobalMatrix(P_We_Local2Global, mlocal);
 			Shader.SetGlobalMatrix(P_We_Uv2Npos, muv);
+
+			var globalField = globalSize * new Vector2(globalAspect, 1f);
+			var result = new SubSpace() {
+				localShare = localShare,
+				localField = new Rect(globalField * localShare.min, globalField * localShare.size),
+				globalField = globalField,
+			};
+			CurrSubspace = result;
+			Changed?.Invoke(this);
+			return result;
 		}
 		#endregion
 
@@ -65,8 +89,8 @@ namespace WeSyncSys {
 			return m;
 		}
 
-		public static float GlobalAspect(float uvSize_x, float uvSize_y, float screenAspect) {
-			return screenAspect * uvSize_y / uvSize_x;
+		public static float GlobalAspect(float localShare_x, float localShare_y, float localAspect) {
+			return localAspect * localShare_y / localShare_x;
 		}
 		#endregion
 	}
