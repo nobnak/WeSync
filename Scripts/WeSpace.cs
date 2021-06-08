@@ -18,6 +18,12 @@ namespace WeSyncSys {
 
 		#region interface
 
+		#region object
+		public override string ToString() {
+			return $"<{GetType().Name} : {CurrSubspace}>";
+		}
+		#endregion
+
 		#region IReadonlySubspace
 		public SubSpace CurrSubspace { get; protected set; }
 #endregion

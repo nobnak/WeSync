@@ -27,13 +27,13 @@ namespace WeSyncSys {
 
 		protected BaseView view;
 		protected CameraData screen;
-		protected Validator validatorValue = new Validator();
+		protected Validator validator = new Validator();
 
 		#region unity
 		private void OnEnable() {
-			validatorValue.Reset();
-			validatorValue.SetCheckers(() => screen.Equals(targetCamera));
-			validatorValue.Validation += () => {
+			validator.Reset();
+			validator.SetCheckers(() => screen.Equals(targetCamera));
+			validator.Validation += () => {
 				screen = targetCamera;
 				if (targetCamera == null)
 					return;
@@ -44,35 +44,42 @@ namespace WeSyncSys {
 				time.Apply();
 
 				targetCamera.orthographicSize = Mathf.Max(1f, rspace.localField.y);
+
+				Debug.Log($"Validation : {this}");
 			};
-			validatorValue.Validated += () => {
+			validator.Validated += () => {
 				events.Changed?.Invoke(this);
 			};
 		}
 		private void OnValidate() {
-			validatorValue.Invalidate();
+			validator.Invalidate();
 		}
 		private void Update() {
-			validatorValue.Validate();
+			validator.Validate();
 		}
 		#endregion
 
 		#region interface
 
 		#region IReadonlySubspace
-		public Structures.SubSpace CurrSubspace => space.CurrSubspace;
+		public Structures.SubSpace CurrSubspace {
+			get {
+				validator.Validate();
+				return space.CurrSubspace;
+			}
+		}
 		#endregion
 
 		#region Exhibitor
 		public override void DeserializeFromJson(string json) {
 			JsonUtility.FromJsonOverwrite(json, tuner);
-			validatorValue.Invalidate();
+			validator.Invalidate();
 		}
 		public override object RawData() {
 			return tuner;
 		}
 		public override string SerializeToJson() {
-			validatorValue.Validate();
+			validator.Validate();
 			return JsonUtility.ToJson(tuner);
 		}
 		public override void Draw() {
@@ -85,16 +92,15 @@ namespace WeSyncSys {
 			}
 		}
 		public override void ApplyViewModelToModel() {
-			validatorValue.Validate();
+			validator.Invalidate();
 		}
 		public override void ResetViewModelFromModel() {
-			validatorValue.Invalidate();
 		}
 		#endregion
 
 		public void ListenCamera(GameObject gameObject) {
 			targetCamera = gameObject.GetComponent<Camera>();
-			validatorValue.Invalidate();
+			validator.Invalidate();
 		}
 
 #endregion
