@@ -5,7 +5,7 @@ using WeSyncSys.Extensions.TimeExt;
 
 namespace WeSyncSys {
 
-	public class WeTime {
+	public class WeTime : IWeBase {
 
 		public readonly static int P_We_Time = Shader.PropertyToID("_We_Time");
 
@@ -18,7 +18,7 @@ namespace WeSyncSys {
 		#endregion
 
 		public System.DateTimeOffset CurrDateTime { get; protected set; }
-		public void Apply() {
+		public void Update() {
 			CurrDateTime = System.DateTimeOffset.Now;
 			var st = CurrDateTime.Pack();
 			Shader.SetGlobalVector(P_We_Time, st);

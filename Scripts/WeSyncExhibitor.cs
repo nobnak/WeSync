@@ -41,7 +41,6 @@ namespace WeSyncSys {
 				var uv = tuner.localUv;
 				var local = new Rect(uv.x, uv.y, uv.z, uv.w);
 				var rspace = space.Apply(screen.screenSize, local, tuner.globalSize);
-				time.Apply();
 
 				targetCamera.orthographicSize = Mathf.Max(1f, rspace.localField.y);
 
@@ -56,6 +55,8 @@ namespace WeSyncSys {
 		}
 		private void Update() {
 			validator.Validate();
+			space.Update();
+			time.Update();
 		}
 		#endregion
 

@@ -9,7 +9,7 @@ namespace WeSyncSys {
 		SubSpace CurrSubspace { get; }
 	}
 
-	public class WeSpace : IReadonlyWeSpace {
+	public class WeSpace : IReadonlyWeSpace, IWeBase {
 
 		public readonly static int P_We_Local2Global = Shader.PropertyToID("_We_Local2Global");
 		public readonly static int P_We_Uv2Npos = Shader.PropertyToID("_We_Uv2Npos");
@@ -26,17 +26,24 @@ namespace WeSyncSys {
 
 		#region IReadonlySubspace
 		public SubSpace CurrSubspace { get; protected set; }
-#endregion
+		#endregion
+
+		#region IWeBase
+		public void Update() {
+			Shader.SetGlobalMatrix(P_We_Local2Global, CurrLocal2Global);
+			Shader.SetGlobalMatrix(P_We_Uv2Npos, CurrUv2Npos);
+		}
+		#endregion
+
+		public Matrix4x4 CurrLocal2Global { get; protected set; }
+		public Matrix4x4 CurrUv2Npos { get; protected set; }
 
 		public SubSpace Apply(Vector2Int localScreen, Rect localShare, float globalSize) {
 			var localShareSize = localShare.size;
 			var localAspect = (float)localScreen.x / localScreen.y;
 			var globalAspect = GlobalAspect(localShareSize.x, localShareSize.y, localAspect);
-			var mlocal = LocalToGlobal(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
-			var muv = UvToNpos(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
-
-			Shader.SetGlobalMatrix(P_We_Local2Global, mlocal);
-			Shader.SetGlobalMatrix(P_We_Uv2Npos, muv);
+			CurrLocal2Global = LocalToGlobal(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
+			CurrUv2Npos = UvToNpos(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
 
 			var globalField = globalSize * new Vector2(globalAspect, 1f);
 			var result = new SubSpace() {
