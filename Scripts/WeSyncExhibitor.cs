@@ -42,9 +42,7 @@ namespace WeSyncSys {
 				var local = new Rect(uv.x, uv.y, uv.z, uv.w);
 				var rspace = space.Apply(screen.screenSize, local, tuner.globalSize);
 
-				targetCamera.orthographicSize = Mathf.Max(1f, rspace.localField.y);
-
-				Debug.Log($"Validation : {this}");
+				targetCamera.orthographicSize = Mathf.Max(1f, rspace.localField.height);
 			};
 			validator.Validated += () => {
 				events.Changed?.Invoke(this);
