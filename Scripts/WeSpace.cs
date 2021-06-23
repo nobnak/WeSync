@@ -13,6 +13,7 @@ namespace WeSyncSys {
 
 		public readonly static int P_We_Local2Global = Shader.PropertyToID("_We_Local2Global");
 		public readonly static int P_We_Uv2Npos = Shader.PropertyToID("_We_Uv2Npos");
+		public readonly static int P_We_Uv2Pos = Shader.PropertyToID("_We_Uv2Pos");
 
 		public event System.Action<IReadonlyWeSpace> Changed;
 
@@ -32,23 +33,28 @@ namespace WeSyncSys {
 		public void Update() {
 			Shader.SetGlobalMatrix(P_We_Local2Global, CurrLocal2Global);
 			Shader.SetGlobalMatrix(P_We_Uv2Npos, CurrUv2Npos);
+			Shader.SetGlobalMatrix(P_We_Uv2Pos, CurrUv2Pos);
 		}
 		#endregion
 
 		public Matrix4x4 CurrLocal2Global { get; protected set; }
 		public Matrix4x4 CurrUv2Npos { get; protected set; }
+		public Matrix4x4 CurrUv2Pos { get; protected set; }
 
 		public SubSpace Apply(Vector2Int localScreen, Rect localShare, float globalSize) {
 			var localShareSize = localShare.size;
 			var localAspect = (float)localScreen.x / localScreen.y;
 			var globalAspect = GlobalAspect(localShareSize.x, localShareSize.y, localAspect);
+			var globalField = globalSize * new Vector2(globalAspect, 1f);
+			var localField = new Rect(globalField * localShare.min, globalField * localShare.size);
+
 			CurrLocal2Global = LocalToGlobal(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
 			CurrUv2Npos = UvToNpos(localShare.width, localShare.height, localShare.x, localShare.y, localAspect);
+			CurrUv2Pos = UvToPos(localField, new Rect(Vector2.zero, globalField));
 
-			var globalField = globalSize * new Vector2(globalAspect, 1f);
 			var result = new SubSpace() {
 				localShare = localShare,
-				localField = new Rect(globalField * localShare.min, globalField * localShare.size),
+				localField = localField,
 				globalField = globalField,
 			};
 			CurrSubspace = result;
@@ -98,6 +104,24 @@ namespace WeSyncSys {
 			m.SetRow(2, new Vector4(1f / localAspect, 1));
 			// inverse (global)
 			m.SetRow(3, new Vector4(1f / globalAspect, 1));
+
+			return m;
+		}
+
+		public static Matrix4x4 UvToPos(
+			Rect localField,
+			Rect globalField
+			) {
+
+			var m = default(Matrix4x4);
+			m.SetRow(0, new Vector4(localField.width, localField.height, localField.x, localField.y));
+			m.SetRow(1, new Vector4(globalField.width, globalField.height, globalField.x, globalField.y));
+			m.SetRow(2, new Vector4(
+				1f / localField.width, 1f / localField.height,
+				-localField.x / localField.width, -localField.y / localField.height));
+			m.SetRow(3, new Vector4(
+				1f / globalField.width, 1f / globalField.height,
+				-globalField.x / globalField.width, -globalField.y / globalField.height));
 
 			return m;
 		}
