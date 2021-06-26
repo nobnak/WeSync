@@ -12,6 +12,8 @@ float4x4 _We_Uv2Pos;
 
 
 float2 trs(float4 m, float2 x) { return m.xy * x + m.zw; }
+float spacialUnits_local() { return _We_Uv2Pos[0][1]; }
+float spacialUnits_global() { return _We_Uv2Pos[1][1]; }
 
 float2 uv2pos_local(float2 uv) { return trs(_We_Uv2Pos[0], uv); }
 float2 uv2pos_global(float2 uv) { return trs(_We_Uv2Pos[1], uv); }
