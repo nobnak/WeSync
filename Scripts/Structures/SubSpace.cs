@@ -17,6 +17,12 @@ namespace WeSyncSys.Structures {
 
 		#region interface
 		#region object
+		public static bool operator ==(SubSpace a, SubSpace b) => a.Equals(b);
+		public static bool operator !=(SubSpace a, SubSpace b) => !a.Equals(b);
+
+		public override bool Equals(object obj) {
+			return (obj != null) && (obj is SubSpace) && (this == (SubSpace)obj);
+		}
 		public override string ToString() {
 			return $"<SubSpace: localShare={localShare}, localField={localField}, globalField={globalField}>";
 		}
@@ -24,8 +30,6 @@ namespace WeSyncSys.Structures {
 		#endregion
 
 		#region static
-		public static bool operator ==(SubSpace a, SubSpace b) => a.Equals(b);
-		public static bool operator !=(SubSpace a, SubSpace b) => !a.Equals(b);
 
 		public static SubSpace Generate(Vector2 globalField) => new SubSpace() {
 			localShare = new Rect(0f, 0f, 1f, 1f),
