@@ -7,6 +7,23 @@ namespace WeSyncSys {
 
 	public interface IReadonlyWeSpace {
 		SubSpace CurrSubspace { get; }
+
+		float spacialUnits_local();
+		float spacialUnits_global();
+
+		Vector2 uv2pos_local(Vector2 uv);
+		Vector2 uv2pos_global(Vector2 uv);
+		Vector2 uv2pos_local_inv(Vector2 x);
+		Vector2 uv2pos_global_inv(Vector2 x);
+
+		Vector2 uv2npos_local(Vector2 uv);
+		Vector2 uv2npos_global(Vector2 uv);
+		Vector2 uv2npos_local_inv(Vector2 npos);
+		Vector2 uv2npos_global_inv(Vector2 npos);
+
+		Vector2 local2global_uv(Vector2 uv);
+		Vector2 local2global_npos(Vector2 npos);
+		Vector2 local2global_uv_inv(Vector2 uv);
 	}
 
 	public class WeSpace : IReadonlyWeSpace, IWeBase {
@@ -27,6 +44,25 @@ namespace WeSyncSys {
 
 		#region IReadonlySubspace
 		public SubSpace CurrSubspace { get; protected set; }
+
+		public float spacialUnits_local() => CurrUv2Pos[0, 1];
+		public float spacialUnits_global() => CurrUv2Pos[1, 1];
+
+		public Vector2 uv2pos_local(Vector2 uv) => TRS(CurrUv2Pos.GetRow(0), uv);
+		public Vector2 uv2pos_global(Vector2 uv) => TRS(CurrUv2Pos.GetRow(1), uv);
+		public Vector2 uv2pos_local_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(2), x);
+		public Vector2 uv2pos_global_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(3), x);
+
+		public Vector2 uv2npos_local(Vector2 uv) => TRS(CurrUv2Npos.GetRow(0), uv);
+		public Vector2 uv2npos_global(Vector2 uv) => TRS(CurrUv2Npos.GetRow(1), uv);
+		public Vector2 uv2npos_local_inv(Vector2 npos) => TRS(CurrUv2Npos.GetRow(2), npos);
+		public Vector2 uv2npos_global_inv(Vector2 npos) => TRS(CurrUv2Npos.GetRow(3), npos);
+
+		public Vector2 local2global_uv(Vector2 uv) => TRS(CurrLocal2Global.GetRow(0), uv);
+		public Vector2 local2global_npos(Vector2 npos) => TRS(CurrLocal2Global.GetRow(1), npos);
+		public Vector2 local2global_uv_inv(Vector2 uv) => TRS(CurrLocal2Global.GetRow(2), uv);
+
+		protected Vector2 TRS(Vector4 m, Vector2 uv) => new Vector2(m.x * uv.x + m.z, m.y * uv.y + m.w);
 		#endregion
 
 		#region IWeBase

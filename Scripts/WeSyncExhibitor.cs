@@ -12,8 +12,13 @@ using UnityEngine.Events;
 
 namespace WeSyncSys {
 
+	public interface IWeSync {
+		WeSpace Space { get; }
+		WeTime Time { get; }
+	}
+
 	[ExecuteAlways]
-	public class WeSyncExhibitor : AbstractExhibitor, IReadonlyWeSpace {
+	public class WeSyncExhibitor : AbstractExhibitor, IWeSync {
 
 		[SerializeField]
 		protected Camera targetCamera = null;
@@ -59,6 +64,11 @@ namespace WeSyncSys {
 		#endregion
 
 		#region interface
+
+		#region IWeSync
+		public WeSpace Space => space;
+		public WeTime Time => time;
+		#endregion
 
 		#region IReadonlySubspace
 		public Structures.SubSpace CurrSubspace {
