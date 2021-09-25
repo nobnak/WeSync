@@ -11,10 +11,10 @@ namespace WeSyncSys {
 		float spacialUnits_local();
 		float spacialUnits_global();
 
-		Vector2 uv2pos_local(Vector2 uv);
-		Vector2 uv2pos_global(Vector2 uv);
-		Vector2 uv2pos_local_inv(Vector2 x);
-		Vector2 uv2pos_global_inv(Vector2 x);
+		Vector2 uv2wpos(Vector2 uv);
+		Vector2 guv2wpos(Vector2 uv);
+		Vector2 uv2wpos_inv(Vector2 x);
+		Vector2 guv2wpos_inv(Vector2 x);
 
 		Vector2 uv2npos_local(Vector2 uv);
 		Vector2 uv2npos_global(Vector2 uv);
@@ -48,10 +48,10 @@ namespace WeSyncSys {
 		public float spacialUnits_local() => CurrUv2Pos[0, 1];
 		public float spacialUnits_global() => CurrUv2Pos[1, 1];
 
-		public Vector2 uv2pos_local(Vector2 uv) => TRS(CurrUv2Pos.GetRow(0), uv);
-		public Vector2 uv2pos_global(Vector2 uv) => TRS(CurrUv2Pos.GetRow(1), uv);
-		public Vector2 uv2pos_local_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(2), x);
-		public Vector2 uv2pos_global_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(3), x);
+		public Vector2 uv2wpos(Vector2 uv) => TRS(CurrUv2Pos.GetRow(0), uv);
+		public Vector2 guv2wpos(Vector2 uv) => TRS(CurrUv2Pos.GetRow(1), uv);
+		public Vector2 uv2wpos_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(2), x);
+		public Vector2 guv2wpos_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(3), x);
 
 		public Vector2 uv2npos_local(Vector2 uv) => TRS(CurrUv2Npos.GetRow(0), uv);
 		public Vector2 uv2npos_global(Vector2 uv) => TRS(CurrUv2Npos.GetRow(1), uv);

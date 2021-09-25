@@ -23,6 +23,9 @@ namespace WeSyncSys.Structures {
 		public override bool Equals(object obj) {
 			return (obj != null) && (obj is SubSpace) && (this == (SubSpace)obj);
 		}
+		public override int GetHashCode() {
+			return localShare.GetHashCode() ^ localField.GetHashCode() ^ globalField.GetHashCode(); 
+		}
 		public override string ToString() {
 			return $"<SubSpace: localShare={localShare}, localField={localField}, globalField={globalField}>";
 		}

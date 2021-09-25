@@ -15,10 +15,10 @@ float2 trs(float4 m, float2 x) { return m.xy * x + m.zw; }
 float spacialUnits_local() { return _We_Uv2Pos[0][1]; }
 float spacialUnits_global() { return _We_Uv2Pos[1][1]; }
 
-float2 uv2pos_local(float2 uv) { return trs(_We_Uv2Pos[0], uv); }
-float2 uv2pos_global(float2 uv) { return trs(_We_Uv2Pos[1], uv); }
-float2 uv2pos_local_inv(float2 x) { return trs(_We_Uv2Pos[2], x); }
-float2 uv2pos_global_inv(float2 x) { return trs(_We_Uv2Pos[3], x); }
+float2 uv2wpos(float2 uv) { return trs(_We_Uv2Pos[0], uv); }
+float2 guv2wpos(float2 uv) { return trs(_We_Uv2Pos[1], uv); }
+float2 uv2wpos_inv(float2 x) { return trs(_We_Uv2Pos[2], x); }
+float2 guv2wpos_inv(float2 x) { return trs(_We_Uv2Pos[3], x); }
 
 float2 uv2npos_local(float2 uv) { return trs(_We_Uv2Npos[0], uv); }
 float2 uv2npos_global(float2 uv) { return trs(_We_Uv2Npos[1], uv); }
