@@ -36,6 +36,7 @@ namespace WeSyncSys {
 
 		#region unity
 		private void OnEnable() {
+			screen = default;
 			validator.Reset();
 			validator.SetCheckers(() => screen.Equals(targetCamera));
 			validator.Validation += () => {
