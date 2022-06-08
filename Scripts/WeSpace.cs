@@ -48,10 +48,10 @@ namespace WeSyncSys {
 		public float spacialUnits_local() => CurrUv2Pos[0, 1];
 		public float spacialUnits_global() => CurrUv2Pos[1, 1];
 
-		public Vector2 uv2wpos(Vector2 uv) => TRS(CurrUv2Pos.GetRow(0), uv);
-		public Vector2 guv2wpos(Vector2 uv) => TRS(CurrUv2Pos.GetRow(1), uv);
-		public Vector2 uv2wpos_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(2), x);
-		public Vector2 guv2wpos_inv(Vector2 x) => TRS(CurrUv2Pos.GetRow(3), x);
+		public Vector2 uv2wpos(Vector2 uv) => TRS(Rect_localField_uv_2_wePos, uv);
+		public Vector2 guv2wpos(Vector2 uv) => TRS(Rect_globalField_uv_2_wePos, uv);
+		public Vector2 uv2wpos_inv(Vector2 x) => TRS(Rect_localField_uv_2_wePos_inv, x);
+		public Vector2 guv2wpos_inv(Vector2 x) => TRS(Rect_globalField_uv_w_wePos_inv, x);
 
 		public Vector2 uv2npos_local(Vector2 uv) => TRS(CurrUv2Npos.GetRow(0), uv);
 		public Vector2 uv2npos_global(Vector2 uv) => TRS(CurrUv2Npos.GetRow(1), uv);
@@ -76,6 +76,11 @@ namespace WeSyncSys {
 		public Matrix4x4 CurrLocal2Global { get; protected set; }
 		public Matrix4x4 CurrUv2Npos { get; protected set; }
 		public Matrix4x4 CurrUv2Pos { get; protected set; }
+
+		public Vector4 Rect_localField_uv_2_wePos => CurrUv2Pos.GetRow(0);
+		public Vector4 Rect_globalField_uv_2_wePos => CurrUv2Pos.GetRow(1);
+		public Vector4 Rect_localField_uv_2_wePos_inv => CurrUv2Pos.GetRow(2);
+		public Vector4 Rect_globalField_uv_w_wePos_inv => CurrUv2Pos.GetRow(3);
 
 		public SubSpace Apply(Vector2Int localScreen, Rect localShare, float globalSize) {
 			var localShareSize = localShare.size;
