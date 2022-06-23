@@ -1,8 +1,8 @@
 {
     "name": "WeSync",
+    "rootNamespace": "",
     "references": [
-        "nobnak.Gist",
-        "ModelDrivenGUI"
+        "nobnak.Gist"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

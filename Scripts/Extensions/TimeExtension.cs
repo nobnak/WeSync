@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace WeSyncSys.Extensions.TimeExt {
@@ -46,5 +47,15 @@ namespace WeSyncSys.Extensions.TimeExt {
 			);
 			return st;
 		}
+
+		public static readonly DateTimeFormatInfo CULTURE = CultureInfo.InvariantCulture.DateTimeFormat;
+		public static bool TryParseAsDateTimeOffset(this string str, 
+			out System.DateTimeOffset date,
+			string format, bool local = false) {
+
+			var style = local ? DateTimeStyles.AssumeLocal : DateTimeStyles.AssumeUniversal;
+			return System.DateTimeOffset.TryParseExact(
+				str, new string[] { format }, CULTURE, style, out date);
+        }
 	}
 }
