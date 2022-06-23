@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 
-namespace WeSyncSys.Extensions.TimeExt {
+namespace WeSyncSys.Extensions {
 
 	public static class TimeExtension {
 
@@ -57,5 +57,8 @@ namespace WeSyncSys.Extensions.TimeExt {
 			return System.DateTimeOffset.TryParseExact(
 				str, new string[] { format }, CULTURE, style, out date);
         }
+
+		public static float ToFloat(this System.TimeSpan span)
+			=> (float)span.TotalSeconds;
 	}
 }
