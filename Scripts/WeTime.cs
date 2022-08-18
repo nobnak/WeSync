@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using WeSyncSys.Extensions;
 
@@ -7,7 +8,7 @@ namespace WeSyncSys {
 
 		public readonly static int P_We_Time = Shader.PropertyToID("_We_Time");
 
-		#region interface
+		#region methods
 
 		#region object
 		public override string ToString() {
@@ -21,6 +22,10 @@ namespace WeSyncSys {
 			var st = CurrDateTime.Pack();
 			Shader.SetGlobalVector(P_We_Time, st);
 		}
+		#endregion
+
+		#region static
+		public static implicit operator System.DateTimeOffset(WeTime wt) => wt.CurrDateTime;
 		#endregion
 	}
 }

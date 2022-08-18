@@ -16,29 +16,24 @@ namespace WeSyncSys.Extensions {
 			TICK_REF_TIME = reftime.Ticks;
 		}
 
-		public static float ToSeconds(this long tick) {
-			return (float)(new System.TimeSpan(tick).TotalSeconds);
-		}
-		public static long ToTicks(this float seconds) {
-			return (long)(System.Math.Round(System.TimeSpan.TicksPerSecond * seconds));
-		}
-		public static System.DateTimeOffset ToDateTime(this long tick) {
-			return new System.DateTimeOffset(tick, CurrTime.Offset);
-		}
+		public static float ToSeconds(this long tick) => (float)(new System.TimeSpan(tick).TotalSeconds);
+		public static long ToTicks(this float seconds) 
+			=> (long)(System.Math.Round(System.TimeSpan.TicksPerSecond * seconds));
+		public static System.DateTimeOffset ToDateTime(this long tick) 
+			=> new System.DateTimeOffset(tick, CurrTime.Offset);
 
 		public static System.DateTimeOffset CurrTime => System.DateTimeOffset.Now;
 		public static long CurrTick => CurrTime.Ticks;
 		public static float CurrRelativeSeconds => CurrTick.RelativeSeconds();
 
-		public static float RelativeSeconds(this long tick) {
-			return (tick - TICK_REF_TIME).ToSeconds();
-		}
-		public static long TickFromRelativeSeconds(this float seconds) {
-			return TICK_REF_TIME + seconds.ToTicks();
-		}
+		public static float RelativeSeconds(this long tick) => (tick - TICK_REF_TIME).ToSeconds();
+		public static float RelativeSeconds(this System.DateTimeOffset date)
+			=> date.Ticks.RelativeSeconds();
+		public static long TickFromRelativeSeconds(this float seconds)
+			=> TICK_REF_TIME + seconds.ToTicks();
 
 		public static Vector4 Pack(this System.DateTimeOffset date) {
-			var totalSecs = CurrRelativeSeconds;
+			var totalSecs = date.Ticks.RelativeSeconds();
 			var st = new Vector4(
 				0f,
 				totalSecs,
@@ -58,7 +53,6 @@ namespace WeSyncSys.Extensions {
 				str, new string[] { format }, CULTURE, style, out date);
         }
 
-		public static float ToFloat(this System.TimeSpan span)
-			=> (float)span.TotalSeconds;
+		public static float ToFloat(this System.TimeSpan span) => (float)span.TotalSeconds;
 	}
 }
