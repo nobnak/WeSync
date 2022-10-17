@@ -8,5 +8,6 @@ namespace WeSyncSys {
 	public interface IWeSync {
 		WeSpace Space { get; }
 		WeTime Time { get; }
+		WeProjection Proj { get; }
 	}
 }
