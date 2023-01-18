@@ -17,6 +17,7 @@ namespace WeSyncSys.Extensions {
 		}
 
 		public static float ToSeconds(this long tick) => (float)(new System.TimeSpan(tick).TotalSeconds);
+		public static float ToMinutes(this long tick) => (float)(new System.TimeSpan(tick).TotalMinutes);
 		public static long ToTicks(this float seconds) 
 			=> (long)(System.Math.Round(System.TimeSpan.TicksPerSecond * seconds));
 		public static System.DateTimeOffset ToDateTime(this long tick) 
@@ -24,11 +25,15 @@ namespace WeSyncSys.Extensions {
 
 		public static System.DateTimeOffset CurrTime => System.DateTimeOffset.Now;
 		public static long CurrTick => CurrTime.Ticks;
-		public static float CurrRelativeSeconds => CurrTick.RelativeSeconds();
 
+		public static float CurrRelativeSeconds => CurrTick.RelativeSeconds();
 		public static float RelativeSeconds(this long tick) => (tick - TICK_REF_TIME).ToSeconds();
 		public static float RelativeSeconds(this System.DateTimeOffset date)
 			=> date.Ticks.RelativeSeconds();
+
+		public static float CurrRelativeMinutes => CurrTick.RelativeMinutes();
+		public static float RelativeMinutes(this long tick) => (tick - TICK_REF_TIME).ToMinutes();
+
 		public static long TickFromRelativeSeconds(this float seconds)
 			=> TICK_REF_TIME + seconds.ToTicks();
 
