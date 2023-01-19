@@ -9,6 +9,7 @@ namespace WeSyncSys.Extensions {
 
 		public readonly static float NOON_IN_SEC = 12 * 3600;
 		public readonly static long TICK_REF_TIME;
+		public readonly static double COMPACT_SEC = 1e-2;
 
 		static TimeExtension() {
 			var reftime = CurrTime;
@@ -17,7 +18,10 @@ namespace WeSyncSys.Extensions {
 		}
 
 		public static float ToSeconds(this long tick) => (float)(new System.TimeSpan(tick).TotalSeconds);
+		public static float ToSecondsCompact(this long tick) => new System.TimeSpan(tick).TotalSeconds.ToCompact();
 		public static float ToMinutes(this long tick) => (float)(new System.TimeSpan(tick).TotalMinutes);
+		public static float ToCompact(this double seconds) => (float)(seconds * COMPACT_SEC);
+		public static float ToCompact(this float seconds) => (float)(seconds * COMPACT_SEC);
 		public static long ToTicks(this float seconds) 
 			=> (long)(System.Math.Round(System.TimeSpan.TicksPerSecond * seconds));
 		public static System.DateTimeOffset ToDateTime(this long tick) 
@@ -30,6 +34,8 @@ namespace WeSyncSys.Extensions {
 		public static float RelativeSeconds(this long tick) => (tick - TICK_REF_TIME).ToSeconds();
 		public static float RelativeSeconds(this System.DateTimeOffset date)
 			=> date.Ticks.RelativeSeconds();
+
+		public static float CurrRelSecondsComp => (CurrTick - TICK_REF_TIME).ToSecondsCompact();
 
 		public static float CurrRelativeMinutes => CurrTick.RelativeMinutes();
 		public static float RelativeMinutes(this long tick) => (tick - TICK_REF_TIME).ToMinutes();
