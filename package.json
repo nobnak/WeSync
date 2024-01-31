@@ -1,0 +1,16 @@
+{
+	"author": {
+		"name": "Nakata Nobuyuki",
+		"email": "nobu.nakata@gmail.com"
+	},
+	"name": "jp.nobnak.wesync",
+	"displayName": "WeSync - Space and Time syncronization",
+	"version": "1.0.0",
+
+	"samples": [
+	],
+
+	"dependencies": {
+		"com.unity.mathematics": "1.2.6"
+	}
+}
