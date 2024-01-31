@@ -1,4 +1,5 @@
 using Gist2.Deferred;
+using Gist2.Extensions.ComponentExt;
 using Gist2.Extensions.SizeExt;
 using Unity.Mathematics;
 using UnityEngine;
@@ -55,10 +56,22 @@ namespace WeSyncSys {
 			space.Update();
 			time.Update();
 		}
-		#endregion
+        #endregion
 
-		#region IWeSync
-		public virtual WeSpace Space => space;
+        #region properties
+		public Tuner CurrTuner {
+			get => tuner.DeepCopy();
+			set {
+				if (!value.EqualsAsJson(tuner)) {
+					tuner = value.DeepCopy();
+                    validator.Invalidate();
+				}
+			}
+		}
+        #endregion
+
+        #region IWeSync
+        public virtual WeSpace Space => space;
 		public virtual WeTime Time => time;
 		public virtual WeProjection Proj => proj;
 		#endregion
