@@ -1,14 +1,13 @@
-using nobnak.Gist.Cameras;
 using UnityEngine;
 
 namespace WeSyncSys {
 
-	public class WeProjection {
+    public class WeProjection {
 
-		public CameraData CurrCam { get; protected set; }
+		public CameraContext CurrCam { get; protected set; }
 		public Matrix4x4 CurrVP { get; protected set; }
 
-		public void Apply(CameraData screen) {
+		public void Apply(CameraContext screen) {
 			this.CurrCam = screen;
 			CurrVP = screen.projectionMatrix * screen.worldToCameraMatrix;
 		}

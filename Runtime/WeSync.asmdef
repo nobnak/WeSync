@@ -2,7 +2,8 @@
     "name": "WeSync",
     "rootNamespace": "",
     "references": [
-        "nobnak.Gist"
+        "Gist2",
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,13 +1,13 @@
-using nobnak.Gist;
-using nobnak.Gist.Cameras;
-using nobnak.Gist.Exhibitor;
+using Gist2.Deferred;
+using Gist2.Extensions.SizeExt;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace WeSyncSys {
 
 	[ExecuteAlways]
-	public class WeSyncBase : AbstractExhibitor, IWeSync {
+	public class WeSyncBase : MonoBehaviour, IWeSync {
 
 		[SerializeField]
 		protected Camera targetCamera = null;
@@ -20,15 +20,15 @@ namespace WeSyncSys {
 		protected WeTime time = new WeTime();
 		protected WeProjection proj = new WeProjection();
 
-		protected CameraData screen;
+		protected CameraContext screen;
 		protected Validator validator = new Validator();
 
 		#region unity
 		protected virtual void OnEnable() {
 			screen = default;
 			validator.Reset();
-			validator.SetCheckers(() => screen.Equals(targetCamera));
-			validator.Validation += () => {
+			validator.CheckValidity += () => screen.Equals(targetCamera);
+			validator.OnValidate += () => {
 				screen = targetCamera;
 				if (targetCamera == null)
 					return;
@@ -37,11 +37,12 @@ namespace WeSyncSys {
 
 				var uv = tuner.localUv;
 				var local = new Rect(uv.x, uv.y, uv.z, uv.w);
-				var rspace = space.Apply(screen.screenSize, local, tuner.globalSize);
+				var size = screen.camera.Size();
+                var rspace = space.Apply(new Vector2Int(size.x, size.y), local, tuner.globalSize);
 
-				targetCamera.orthographicSize = Mathf.Max(1f, 0.5f * rspace.localField.height);
+				targetCamera.orthographicSize = math.max(1f, 0.5f * rspace.localField.height);
 			};
-			validator.Validated += () => {
+			validator.AfterValidate += () => {
 				Notify();
 			};
 			Notify();
@@ -75,20 +76,6 @@ namespace WeSyncSys {
 		public virtual void ListenCamera(GameObject gameObject) {
 			targetCamera = gameObject.GetComponent<Camera>();
 			validator.Invalidate();
-		}
-		#endregion
-
-		#region Exhibitor
-		public override void DeserializeFromJson(string json) {
-			JsonUtility.FromJsonOverwrite(json, tuner);
-			validator.Invalidate();
-		}
-		public override object RawData() {
-			return tuner;
-		}
-		public override string SerializeToJson() {
-			validator.Validate();
-			return JsonUtility.ToJson(tuner);
 		}
 		#endregion
 

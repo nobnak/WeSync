@@ -5,12 +5,13 @@
 	},
 	"name": "jp.nobnak.wesync",
 	"displayName": "WeSync - Space and Time syncronization",
-	"version": "1.0.1",
+	"version": "2.0.0",
 
 	"samples": [
 	],
 
 	"dependencies": {
-		"com.unity.mathematics": "1.2.6"
+		"com.unity.mathematics": "1.2.6",
+		"jp.nobnak.gist2": "1.4.3"
 	}
 }
