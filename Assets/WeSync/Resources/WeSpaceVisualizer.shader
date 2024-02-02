@@ -1,6 +1,7 @@
 Shader "Hidden/WeSpaceVisualizer" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
+        _Wireframe_Gain ("Wireframe width", Float) = 1.5
     }
     SubShader {
         // No culling or depth
@@ -13,6 +14,7 @@ Shader "Hidden/WeSpaceVisualizer" {
 
             #include "UnityCG.cginc"
             #include "Packages/jp.nobnak.wesync/Resources/WeSync_Common.cginc"
+            #include "Packages/jp.nobnak.wireframe/ShaderLIbrary/Wireframe.cginc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -42,8 +44,14 @@ Shader "Hidden/WeSpaceVisualizer" {
             }
 
             float4 frag (v2f i) : SV_Target {
-                float4 col = tex2D(_MainTex, i.uvlocal.xy);
-                return col;
+                float4 cmain = tex2D(_MainTex, i.uvlocal.xy);
+                
+                float4 p = float4(frac(i.pos.xy), 0, 0);
+                p.zw = 1 - p.xy;
+                //return p;
+
+                float w = wireframe(p);
+                return float4(lerp(cmain.xyz, 1 - cmain.xyz, w), cmain.w);
             }
             ENDCG
         }
