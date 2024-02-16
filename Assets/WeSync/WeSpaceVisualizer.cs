@@ -18,9 +18,14 @@ public class WeSpaceVisualizer : MonoBehaviour {
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         material.SetFloat(P_Wireframe_Gain, tuner.wireframeGain);
         material.SetInt(P_PositionScale, tuner.positionScale);
-        
+
         Graphics.Blit(source, destination, material);
     }
+    #endregion
+
+    #region interface
+    public Tuner CurrTuner => tuner;
+    public void Invalidate() { }
     #endregion
 
     #region declarations

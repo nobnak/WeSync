@@ -83,10 +83,14 @@ namespace WeSyncSys {
 				return space.CurrSubspace;
 			}
 		}
-		#endregion
+        #endregion
 
-		#region listeners
-		public virtual void ListenCamera(GameObject gameObject) {
+        #region interface
+		public void Invalidate() => validator.Invalidate();
+        #endregion
+
+        #region listeners
+        public virtual void ListenCamera(GameObject gameObject) {
 			targetCamera = gameObject.GetComponent<Camera>();
 			validator.Invalidate();
 		}

@@ -1,3 +1,4 @@
+using RosettaUI;
 using UnityEngine;
 using WeSyncSys;
 
@@ -7,21 +8,47 @@ namespace IllusionSys2.Tests {
 
 		public Links links = new Links();
 
-		public void Listen(IWeSync we) {
-			var m = links.mat;
-			if (m != null) {
-				var sub = we.Space.CurrSubspace;
-				var share = sub.localShare;
-				m.mainTextureOffset = new Vector2(share.x, share.y);
-				m.mainTextureScale = new Vector2(share.width, share.height);
-			}
-		}
+        #region unity
+        void Awake() {
+            var uiRoot = links.ui;
+            var weSync = links.weSync;
+            var vis = links.vis;
+            if (uiRoot != null) {
+                uiRoot.Build(
+                    UI.Window(
+                        UI.WindowLauncher(
+                            "WeSync",
+                            UI.Window(
+                                "WeSync",
+                                UI.Page(
+                                    UI.Field(() => weSync.CurrTuner)
+                                        .RegisterValueChangeCallback(() => weSync.Invalidate())
+                                )
+                            )
+                        ),
+                        UI.WindowLauncher(
+                            "WeSpaceVisualizer",
+                            UI.Window(
+                                "WeSpaceVisualizer",
+                                UI.Page(
+                                    UI.Field(() => vis.CurrTuner)
+                                        .RegisterValueChangeCallback(() => vis.Invalidate())
+                                )
+                            )
+                        )
+                    )
+                );
+            }
+        }
+        #endregion
 
-		#region declarations
-		[System.Serializable]
+        #region declarations
+        [System.Serializable]
 		public class Links {
-			public Material mat;
-		}
+			public RosettaUIRoot ui;
+            public WeSyncBase weSync;
+            public WeSpaceVisualizer vis;
+        }
 		#endregion
 	}
 }

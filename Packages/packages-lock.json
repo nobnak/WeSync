@@ -199,6 +199,22 @@
       },
       "url": "https://packages.unity.com"
     },
+    "ga.fuquna.rosettaui": {
+      "version": "1.4.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
+    "ga.fuquna.rosettaui.uitoolkit": {
+      "version": "1.4.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "ga.fuquna.rosettaui": "1.4.1"
+      },
+      "url": "https://package.openupm.com"
+    },
     "jp.nobnak.ascii_shader": {
       "version": "1.2.0",
       "depth": 0,
