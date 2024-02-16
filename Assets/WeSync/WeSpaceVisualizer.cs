@@ -17,6 +17,7 @@ public class WeSpaceVisualizer : MonoBehaviour {
     }
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         material.SetFloat(P_Wireframe_Gain, tuner.wireframeGain);
+        material.SetInt(P_PositionScale, tuner.positionScale);
         
         Graphics.Blit(source, destination, material);
     }
@@ -24,11 +25,14 @@ public class WeSpaceVisualizer : MonoBehaviour {
 
     #region declarations
     public static readonly int P_Wireframe_Gain = Shader.PropertyToID("_Wireframe_Gain");
+    public static readonly int P_PositionScale = Shader.PropertyToID("_PositionScale");
 
     [System.Serializable]
     public class Tuner {
         [Range(0f, 10f)]
         public float wireframeGain = 1.0f;
+        [Range(-10, 10)]
+        public int positionScale = 0;
     }
     #endregion
 }

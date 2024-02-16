@@ -2,6 +2,7 @@ Shader "Hidden/WeSpaceVisualizer" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
         _Wireframe_Gain ("Wireframe width", Float) = 1.5
+        _PositionScale ("Position Scale", Float) = 0
     }
     SubShader {
         // No culling or depth
@@ -15,6 +16,7 @@ Shader "Hidden/WeSpaceVisualizer" {
             #include "UnityCG.cginc"
             #include "Packages/jp.nobnak.wesync/Resources/WeSync_Common.cginc"
             #include "Packages/jp.nobnak.wireframe/ShaderLIbrary/Wireframe.cginc"
+            #include "Packages/jp.nobnak.ascii_shader/ShaderLibrary/FontTexture.hlslinc"
 
             struct appdata {
                 float4 vertex : POSITION;
@@ -29,6 +31,7 @@ Shader "Hidden/WeSpaceVisualizer" {
             };
 
             sampler2D _MainTex;
+            int _PositionScale;
 
             v2f vert (appdata v) {
 	            float4 uvlocal = float4(v.uv, uv2npos_local(v.uv));
@@ -46,12 +49,23 @@ Shader "Hidden/WeSpaceVisualizer" {
             float4 frag (v2f i) : SV_Target {
                 float4 cmain = tex2D(_MainTex, i.uvlocal.xy);
                 
-                float4 p = float4(frac(i.pos.xy), 0, 0);
-                p.zw = 1 - p.xy;
-                //return p;
+                float2 pos = i.pos.zw;
+                float2 pos_scaled = pos * pow(2, _PositionScale);
+                float4 p_repeat = float4(frac(pos_scaled), 0, 0);
+                p_repeat.zw = 1 - p_repeat.xy;
 
-                float w = wireframe(p);
-                return float4(lerp(cmain.xyz, 1 - cmain.xyz, w), cmain.w);
+                int2 code = floor(pos_scaled);
+                int4 ascii = int4(
+                    FontTexture_IndexOf(code.y / 10)[1],
+                    FontTexture_IndexOf(code.y % 10)[0],
+                    FontTexture_IndexOf(code.x / 10)[1],
+                    FontTexture_IndexOf(code.x % 10)[0]
+                );
+                float4 f = FontTexture_GetText4(p_repeat * 3, ascii);
+
+                float w = wireframe(p_repeat);
+                w += f.x;
+                return float4(lerp(cmain.xyz, 1 - cmain.xyz, saturate(w)), cmain.w);
             }
             ENDCG
         }
